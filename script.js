@@ -14,19 +14,19 @@ const container = document.querySelector(".container"),
     picInPicBtn = container.querySelector(".pic-in-pic span"),
     fullScreenBtn = container.querySelector(".fullscreen i");
 
-    let timer;
+let timer;
 
-    const hideControls= ()=>{
-      timer=setTimeout(()=>{
-            container.classList.remove("show-controls");
-        },3000);
-    };
+const hideControls = () => {
+    timer = setTimeout(() => {
+        container.classList.remove("show-controls");
+    }, 3000);
+};
+hideControls();
+container.addEventListener('mousemove', () => {
+    container.classList.add("show-controls");
+    clearTimeout(timer);
     hideControls();
-    container.addEventListener('mousemove',()=>{
-        container.classList.add("show-controls");
-        clearTimeout(timer);
-        hideControls();
-    });
+});
 
 const formatTime = time => {
     let seconds = Math.floor(time % 60),
@@ -42,17 +42,18 @@ const formatTime = time => {
     }
 
     return `${hours}:${minutes}:${seconds}`;
-}
+};
+
 mainVideo.addEventListener('timeupdate', (e) => {
-    let { currentTime, duration } = e.target; //getting current time and duration of the video..
-    let percent = (currentTime / duration) * 100; //getting the percentage..
-    progressBar.style.width = `${percent}%` //passing as % progress width..
+    let { currentTime, duration } = e.target;
+    let percent = (currentTime / duration) * 100;
+    progressBar.style.width = `${percent}%`;
     currentVidTime.innerHTML = formatTime(currentTime);
 });
 
 mainVideo.addEventListener('loadeddata', (e) => {
     videoDuration.innerHTML = formatTime(e.target.duration);
-})
+});
 
 videoTimeline.addEventListener('click', (e) => {
     let timelineWidth = videoTimeline.clientWidth;
@@ -61,9 +62,9 @@ videoTimeline.addEventListener('click', (e) => {
 
 const dragableProgressBar = (e) => {
     let timelineWidth = videoTimeline.clientWidth;
-    progressBar.style.width=`${e.offsetX}px`;
+    progressBar.style.width = `${e.offsetX}px`;
     mainVideo.currentTime = (e.offsetX / timelineWidth) * mainVideo.duration;
-    currentVidTime.innerHTML=formatTime(mainVideo.currentTime);
+    currentVidTime.innerHTML = formatTime(mainVideo.currentTime);
 };
 
 videoTimeline.addEventListener('mousedown', () => {
@@ -74,37 +75,34 @@ container.addEventListener('mouseup', () => {
     videoTimeline.removeEventListener('mousemove', dragableProgressBar);
 });
 
-videoTimeline.addEventListener('mousemove',(e)=>{
-    const progressTime= videoTimeline.querySelector("span");
-    let offsetX=e.offsetX;
-    progressTime.style.left=`${offsetX}px`;
+videoTimeline.addEventListener('mousemove', (e) => {
+    const progressTime = videoTimeline.querySelector("span");
+    let offsetX = e.offsetX;
+    progressTime.style.left = `${offsetX}px`;
 
     let timelineWidth = videoTimeline.clientWidth;
-    let percent= (e.offsetX / timelineWidth) * mainVideo.duration; //getting percentage
+    let percent = (e.offsetX / timelineWidth) * mainVideo.duration;
 
-    progressTime.innerText=formatTime(percent);
+    progressTime.innerText = formatTime(percent);
 });
 
 volumeBtn.addEventListener('click', () => {
     if (!volumeBtn.classList.contains("fa-volume-high")) {
         volumeBtn.classList.replace("fa-volume-xmark", "fa-volume-high")
-        mainVideo.volume = 0.5; //passing the 0.5 valuse as video volument
-    }
-    else {
-        mainVideo.volume = 0.0; //passing the 0.0 valuse as video volument
+        mainVideo.volume = 0.5;
+    } else {
+        mainVideo.volume = 0.0;
         volumeBtn.classList.replace("fa-volume-high", "fa-volume-xmark")
     }
 
-    volumeSlider.value = mainVideo.volume; //updates the slider value according to the video volume
+    volumeSlider.value = mainVideo.volume;
 });
 
 volumeSlider.addEventListener("input", e => {
     mainVideo.volume = e.target.value;
-    console.log(e.target.value);
     if (e.target.value <= 0) {
         volumeBtn.classList.replace("fa-volume-high", "fa-volume-xmark");
-    }
-    else {
+    } else {
         volumeBtn.classList.replace("fa-volume-xmark", "fa-volume-high")
     }
 });
@@ -115,14 +113,11 @@ speedBtn.addEventListener('click', () => {
 
 speedOptions.querySelectorAll("li").forEach(option => {
     option.addEventListener('click', () => {
-        mainVideo.playbackRate = option.dataset.speed; //passing option dataset value as video playback value..
-
+        mainVideo.playbackRate = option.dataset.speed;
         speedOptions.querySelector(".active").classList.remove("active");
         option.classList.add("active");
-
     });
 });
-
 
 document.addEventListener('click', (e) => {
     if (e.target.tagName !== "SPAN" || e.target.className !== "material-symbols-outlined") {
@@ -130,25 +125,19 @@ document.addEventListener('click', (e) => {
     }
 });
 
-
 picInPicBtn.addEventListener('click', () => {
-    mainVideo.requestPictureInPicture(); //changing the video mode to pic in pic
+    mainVideo.requestPictureInPicture();
 });
 
 fullScreenBtn.addEventListener('click', () => {
     container.classList.toggle("fullscreen");
-
     if (!container.classList.contains("fullscreen")) {
-        //if video is already in fullscree mode
         fullScreenBtn.classList.replace("fa-compress", "fa-expand");
-        return document.exitFullscreen;
+        document.exitFullscreen();
     }
-
     fullScreenBtn.classList.replace("fa-expand", "fa-compress")
-    container.requestFullscreen;
-
-})
-
+    container.requestFullscreen();
+});
 
 skipBackward.addEventListener('click', () => {
     mainVideo.currentTime -= 5;
@@ -156,18 +145,16 @@ skipBackward.addEventListener('click', () => {
 
 skipForward.addEventListener('click', () => {
     mainVideo.currentTime += 5;
-})
+});
 
 playPauseBtn.addEventListener('click', () => {
     mainVideo.paused ? mainVideo.play() : mainVideo.pause();
 });
 
-/*Play Pause Event Added*/
-
-
 mainVideo.addEventListener('play', () => {
     playPauseBtn.classList.replace("fa-play", "fa-pause")
 });
+
 mainVideo.addEventListener('pause', () => {
     playPauseBtn.classList.replace("fa-pause", "fa-play");
 });
@@ -181,7 +168,40 @@ document.addEventListener('keyup', (e) => {
         volumeBtn.click();
     }
 
+    console.log(e.code);
+    if(e.code==="ArrowRight"){
+        skipForward.click();
+    }
+
+    if(e.code==="ArrowLeft"){
+        skipBackward.click();
+    }
 });
 
+const leftClick = document.querySelector(".left-click"),
+    rightClick = document.querySelector(".right-click"),
+    centerClick = document.querySelector(".center-click");
 
-/*My Concepts*/
+leftClick.addEventListener('dblclick', () => {
+    skipBackward.click();
+});
+
+rightClick.addEventListener('dblclick', () => {
+    skipForward.click();
+});
+
+centerClick.addEventListener('click', () => {
+    playPauseBtn.click();
+});
+
+const selection = document.getElementById("fileInput");
+selection.addEventListener('change', (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+        const videoURL = URL.createObjectURL(selectedFile);
+        let source = mainVideo.querySelector("source");
+        source.src = videoURL;
+        mainVideo.load();
+    }
+});
